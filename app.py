@@ -354,72 +354,23 @@ st.markdown(
 
 # Create a swipeable card
 swipe_card = st.empty()
-swipe_card.markdown(f'<div class="swipe-card" id="swipe-card">{st.session_state.current_film}</div>', unsafe_allow_html=True)
+swipe_card.markdown(f'<div class="swipe-card">{st.session_state.current_film}</div>', unsafe_allow_html=True)
 
-# JavaScript for swipe functionality
-st.markdown(
-    """
-    <script>
-    const card = document.getElementById('swipe-card');
-    let startX;
+# Create buttons for swiping
+col1, col2 = st.columns(2)
 
-    card.addEventListener('mousedown', (e) => {
-        startX = e.clientX;
-        card.style.transition = 'none'; // Disable transition for smooth dragging
-    });
+with col1:
+    if st.button("Swipe Left 👈"):
+        st.session_state.swipes += 1
+        st.session_state.current_film = random.choice(films['critically acclaimed'])
+        st.write(f"You swiped left on: {st.session_state.current_film}")
 
-    card.addEventListener('mousemove', (e) => {
-        if (startX !== undefined) {
-            const currentX = e.clientX;
-            const diffX = currentX - startX;
-            card.style.transform = `translateX(${diffX}px)`;
-        }
-    });
-
-    card.addEventListener('mouseup', (e) => {
-        const currentX = e.clientX;
-        const diffX = currentX - startX;
-
-        if (diffX > 100) { // Swipe right
-            card.style.transform = 'translateX(100vw)';
-            card.style.transition = 'transform 0.3s ease';
-            setTimeout(() => {
-                window.parent.streamlit.setMatch(card.innerHTML);
-                card.innerHTML = 'You swiped right on: ' + card.innerHTML;
-                card.style.transform = 'translateX(0)';
-                card.style.transition = 'none';
-            }, 300);
-        } else if (diffX < -100) { // Swipe left
-            card.style.transform = 'translateX(-100vw)';
-            card.style.transition = 'transform 0.3s ease';
-            setTimeout(() => {
-                card.innerHTML = 'You swiped left on: ' + card.innerHTML;
-                card.style.transform = 'translateX(0)';
-                card.style.transition = 'none';
-            }, 300);
-        } else {
-            card.style.transform = 'translateX(0)';
-            card.style.transition = 'transform 0.3s ease';
-        }
-
-        startX = undefined; // Reset startX
-    });
-
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateX(0)';
-        card.style.transition = 'transform 0.3s ease';
-        startX = undefined; // Reset startX
-    });
-    </script>
-    """,
-    unsafe_allow_html=True
-)
-
-# Function to set match in session state
-def set_match(film):
-    st.session_state.user_matches.append(film)
-    st.session_state.swipes += 1
-    st.session_state.current_film = random.choice(films['critically acclaimed'])
+with col2:
+    if st.button("Swipe Right 👉"):
+        st.session_state.user_matches.append(st.session_state.current_film)
+        st.session_state.swipes += 1
+        st.session_state.current_film = random.choice(films['critically acclaimed'])
+        st.write(f"You swiped right on: {st.session_state.current_film}")
 
 # Check for matches
 if st.session_state.swipes >= 5:
