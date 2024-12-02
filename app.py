@@ -4,80 +4,6 @@ import random
 # Define the films
 films = {
     'critically acclaimed': [
-        'L.A. Confidential (1997)', 'The Godfather (1972)', 'Casablanca (1942)', 
-        'Seven Samurai (1954)', 'Parasite (2019)', 'Schindler\'s List (1993)',
-        'Top Gun: Maverick (2022)', 'Toy Story 2 (1999)', 'Chinatown (1974)',
-        # Add all other movies here...
-    ]
-}
-
-# Initialize session state
-if 'user_matches' not in st.session_state:
-    st.session_state.user_matches = []
-if 'current_film_index' not in st.session_state:
-    st.session_state.current_film_index = 0
-
-# Function to update the film index
-def update_film_index():
-    if st.session_state.current_film_index < len(films['critically acclaimed']) - 1:
-        st.session_state.current_film_index += 1
-    else:
-        st.session_state.current_film_index = 0  # Reset to first film if at the end
-
-# Streamlit app layout
-st.set_page_config(page_title="Film Swipe App", page_icon="🎬", layout="centered")
-st.title("🎬 Film Swipe App")
-st.markdown("<h2 style='color: #FF6347;'>Swipe Right for Love, Left for Regret!</h2>", unsafe_allow_html=True)
-
-# Display the current film
-current_film = films['critically acclaimed'][st.session_state.current_film_index]
-st.write(f"**Current Film:** {current_film}")
-
-# Create a swipeable card with improved styling
-st.markdown(
-    f"""
-    <style>
-    body {{
-        background-color: #f0f8ff;
-    }}
-    .swipe-card {{
-        border: 2px solid #0072B1;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 10px;
-        text-align: center;
-        background-color: #fff;
-        transition: transform 0.3s ease;
-        position: relative;
-        width: 300px;
-        height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }}
-    </style>
-    <div class="swipe-card">{current_film}</div>
-    """,
-    unsafe_allow_html=True
-)
-
-# Create buttons for swiping
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("Swipe Left 👈"):
-        update_film_index()
-with col2:
-    if st.button("Swipe Right 👉"):
-        st.session_state.user_matches.append(current_film)
-        update_film_index()
-
-# Display matches
-if st.session_state.user_matches:
-    st.subheader("Your Matches")
-    for match in st.session_state.user_matches:
-        st.write(match)
         'L.A. Confidential (1997)',  # 99%
         'The Godfather (1972)',  # 97%
         'Casablanca (1942)',  # 99%
@@ -301,45 +227,6 @@ if st.session_state.user_matches:
         'The Apartment (1960)',  # 93%
         'Apollo 13 (1995)',  # 96%
         'Princess Mononoke (1997)',  # 93%
-        'Umberto D (1952)',  # 98%
-        'Black Panther (2018)',  # 96%
-        'Bringing Up Baby (1938)',  # 97%
-        'The Sting (1973)',  # 93%
-        'Logan (2017)',  # 93%
-        'Nightcrawler (2014)',  # 95%
-        'The Departed (2006)',  # 91%
-        'Juno (2007)',  # 93%
-        'Hero (2002)',  # 94%
-        'Shaun of the Dead (2004)',  # 92%
-        'Stagecoach (1939)',  # 100%
-        'Back to the Future (1985)',  # 93%
-        'Die Hard (1988)',  # 94%
-        'No Country for Old Men (2007)',  # 93%
-        'The Lion King (1994)',  # 92%
-        'Gravity (2013)',  # 96%
-        'The Leopard (1963)',  # 98%
-        'Day for Night (1973)',  # 98%
-        'Badlands (1973)',  # 97%
-        'Touch of Evil (1958)',  # 97%
-        'Yojimbo (1961)',  # 96%
-        'A Streetcar Named Desire (1951)',  # 97%
-        'Breathless (1959)',  # 95%
-        'The Manchurian Candidate (1962)',  # 97%
-        'The French Connection (1971)',  # 97%
-        'The Bourne Ultimatum (2007)',  # 92%
-        'My Fair Lady (1964)',  # 94%
-        'It\'s a Wonderful Life (1946)',  # 94%
-        'Some Like It Hot (1959)',  # 95%
-        'The Fugitive (1993)',  # 96%
-        'Guardians of the Galaxy (2014)',  # 92%
-        'Airplane! (1980)',  # 95%
-        'Groundhog Day (1993)',  # 94%
-        'This Is Spinal Tap (1984)',  # 96%
-        'Beauty and the Beast (1991)',  # 93%
-        'The Taking of Pelham One Two Three (1974)',  # 98%
-        'City Lights (1931)',  # 95%
-        'Kiki\'s Delivery Service (1989)',  # 98%
-        'City of God (2002)',  # 91%
         'Rosemary\'s Baby (1968)',  # 97%
         'Call Me by Your Name (2017)',  # 95%
         'Aladdin (1992)',  # 95%
@@ -355,7 +242,7 @@ if st.session_state.user_matches:
         'The Odd Couple (1968)',  # 95%
         'Bride of Frankenstein (1935)',  # 98%
         'What\'s Love Got to Do With It (1993)',  # 97%
-        'Star Wars: The Force Awakens (2015)',  # 93%
+        'Star Wars: Episode VII - The Force Awakens (2015)',  # 93%
         'Roman Holiday (1953)',  # 96%
         'Amélie (2001)',  # 90%
         'To Be or Not to Be (1942)',  # 96%
@@ -384,10 +271,15 @@ if st.session_state.user_matches:
 # Initialize session state
 if 'user_matches' not in st.session_state:
     st.session_state.user_matches = []
-if 'current_film' not in st.session_state:
-    st.session_state.current_film = random.choice(films['critically acclaimed'])
-if 'swipes' not in st.session_state:
-    st.session_state.swipes = 0
+if 'current_film_index' not in st.session_state:
+    st.session_state.current_film_index = 0
+
+# Function to update the film index
+def update_film_index():
+    if st.session_state.current_film_index < len(films['critically acclaimed']) - 1:
+        st.session_state.current_film_index += 1
+    else:
+        st.session_state.current_film_index = 0  # Reset to first film if at the end
 
 # Streamlit app layout
 st.set_page_config(page_title="Film Swipe App", page_icon="🎬", layout="centered")
@@ -395,16 +287,17 @@ st.title("🎬 Film Swipe App")
 st.markdown("<h2 style='color: #FF6347;'>Swipe Right for Love, Left for Regret!</h2>", unsafe_allow_html=True)
 
 # Display the current film
-st.write(f"**Current Film:** {st.session_state.current_film}")
+current_film = films['critically acclaimed'][st.session_state.current_film_index]
+st.write(f"**Current Film:** {current_film}")
 
-# Create a swipeable card
+# Create a swipeable card with improved styling
 st.markdown(
-    """
+    f"""
     <style>
-    body {
+    body {{
         background-color: #f0f8ff;
-    }
-    .swipe-card {
+    }}
+    .swipe-card {{
         border: 2px solid #0072B1;
         border-radius: 10px;
         padding: 20px;
@@ -413,41 +306,34 @@ st.markdown(
         background-color: #fff;
         transition: transform 0.3s ease;
         position: relative;
-        width: 300px; /* Set a fixed width for the card */
-        height: 200px; /* Set a fixed height for the card */
+        width: 300px;
+        height: 200px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
+    }}
     </style>
+    <div class="swipe-card">{current_film}</div>
     """,
     unsafe_allow_html=True
 )
 
-# Create a swipeable card
-swipe_card = st.empty()
-swipe_card.markdown(f'<div class="swipe-card">{st.session_state.current_film}</div>', unsafe_allow_html=True)
-
 # Create buttons for swiping
 col1, col2 = st.columns(2)
-
 with col1:
     if st.button("Swipe Left 👈"):
-        st.session_state.swipes += 1
-        st.session_state.current_film = random.choice(films['critically acclaimed'])
-        st.write(f"You swiped left on: {st.session_state.current_film}")
-
+        st.write(f"You swiped left on: {current_film}")
+        update_film_index()
 with col2:
     if st.button("Swipe Right 👉"):
-        st.session_state.user_matches.append(st.session_state.current_film)
-        st.session_state.swipes += 1
-        st.session_state.current_film = random.choice(films['critically acclaimed'])
-        st.write(f"You swiped right on: {st.session_state.current_film}")
+        st.session_state.user_matches.append(current_film)
+        st.write(f"You swiped right on: {current_film}")
+        update_film_index()
 
-# Check for matches
-if st.session_state.swipes >= 5:
-    st.write("MATCHED! 🎉")
-    st.write("Your matches:", st.session_state.user_matches)
-    st.stop()
+# Display matches
+if st.session_state.user_matches:
+    st.subheader("Your Matches")
+    for match in st.session_state.user_matches:
+        st.write(match)
