@@ -1,7 +1,5 @@
 import streamlit as st
 import random
-import json
-import os
 
 # Define the films
 films = {
@@ -310,16 +308,12 @@ films = {
 }
 
 # Initialize session state
-if 'user1_matches' not in st.session_state:
-    st.session_state.user1_matches = []
-if 'user2_matches' not in st.session_state:
-    st.session_state.user2_matches = []
+if 'user_matches' not in st.session_state:
+    st.session_state.user_matches = []
 if 'current_film' not in st.session_state:
     st.session_state.current_film = random.choice(films['critically acclaimed'])
-if 'user1_swipes' not in st.session_state:
-    st.session_state.user1_swipes = 0
-if 'user2_swipes' not in st.session_state:
-    st.session_state.user2_swipes = 0
+if 'swipes' not in st.session_state:
+    st.session_state.swipes = 0
 
 # Streamlit app layout
 st.title("Swipe Left or Right on Films")
@@ -327,47 +321,86 @@ st.title("Swipe Left or Right on Films")
 # Display the current film
 st.write(f"**Current Film:** {st.session_state.current_film}")
 
-# Create boxes for swiping
+# Create a swipeable card
 st.markdown(
     """
     <style>
-    .box {
+    .swipe-card {
         border: 2px solid #0072B1;
         border-radius: 10px;
         padding: 20px;
         margin: 10px;
         text-align: center;
         background-color: #f0f0f0;
+        transition: transform 0.3s ease;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Create buttons for swiping
-col1, col2 = st.columns(2)
+# Create a swipeable card
+swipe_card = st.empty()
+swipe_card.markdown(f'<div class="swipe-card">{st.session_state.current_film}</div>', unsafe_allow_html=True)
 
-with col1:
-    if st.button("Swipe Left"):
-        st.session_state.user1_swipes += 1
-        st.session_state.current_film = random.choice(films['critically acclaimed'])
-        st.write("You swiped left on:", st.session_state.current_film)
+# JavaScript for swipe functionality
+st.markdown(
+    """
+    <script>
+    const card = document.querySelector('.swipe-card');
+    let startX;
 
-with col2:
-    if st.button("Swipe Right"):
-        st.session_state.user1_matches.append(st.session_state.current_film)
-        st.session_state.user1_swipes += 1
-        st.session_state.current_film = random.choice(films['critically acclaimed'])
-        st.write("You swiped right on:", st.session_state.current_film)
+    card.addEventListener('mousedown', (e) => {
+        startX = e.clientX;
+        card.style.transition = 'none'; // Disable transition for smooth dragging
+    });
+
+    card.addEventListener('mousemove', (e) => {
+        const currentX = e.clientX;
+        const diffX = currentX - startX;
+        card.style.transform = `translateX(${diffX}px)`;
+    });
+
+    card.addEventListener('mouseup', (e) => {
+        const currentX = e.clientX;
+        const diffX = currentX - startX;
+
+        if (diffX > 100) { // Swipe right
+            card.style.transform = 'translateX(100vw)';
+            card.style.transition = 'transform 0.3s ease';
+            setTimeout(() => {
+                card.innerHTML = 'You swiped right on: ' + card.innerHTML;
+                card.style.transform = 'translateX(0)';
+                card.style.transition = 'none';
+                // Update matches
+                window.parent.streamlit.setMatch(card.innerHTML);
+            }, 300);
+        } else if (diffX < -100) { // Swipe left
+            card.style.transform = 'translateX(-100vw)';
+            card.style.transition = 'transform 0.3s ease';
+            setTimeout(() => {
+                card.innerHTML = 'You swiped left on: ' + card.innerHTML;
+                card.style.transform = 'translateX(0)';
+                card.style.transition = 'none';
+            }, 300);
+        } else {
+            card.style.transform = 'translateX(0)';
+            card.style.transition = 'transform 0.3s ease';
+        }
+    });
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
+# Function to set match in session state
+def set_match(film):
+    st.session_state.user_matches.append(film)
+    st.session_state.swipes += 1
+    st.session_state.current_film = random.choice(films['critically acclaimed'])
 
 # Check for matches
-if st.session_state.user1_swipes >= 5:
-    st.write("You have swiped 5 times!")
-    st.write("Your matches:", st.session_state.user1_matches)
-    st.stop()
-
-# Display matches
-if st.session_state.user1_swipes >= 5:
+if st.session_state.swipes >= 5:
     st.write("MATCHED!")
-    st.write("Discuss your matches:")
-    st.write(st.session_state.user1_matches)
+    st.write("Your matches:", st.session_state.user_matches)
+    st.stop()
