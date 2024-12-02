@@ -316,7 +316,9 @@ if 'swipes' not in st.session_state:
     st.session_state.swipes = 0
 
 # Streamlit app layout
-st.title("Swipe Left or Right on Films")
+st.set_page_config(page_title="Film Swipe App", page_icon="🎬", layout="centered")
+st.title("🎬 Film Swipe App")
+st.markdown("<h2 style='color: #FF6347;'>Swipe Right for Love, Left for Regret!</h2>", unsafe_allow_html=True)
 
 # Display the current film
 st.write(f"**Current Film:** {st.session_state.current_film}")
@@ -325,13 +327,16 @@ st.write(f"**Current Film:** {st.session_state.current_film}")
 st.markdown(
     """
     <style>
+    body {
+        background-color: #f0f8ff;
+    }
     .swipe-card {
         border: 2px solid #0072B1;
         border-radius: 10px;
         padding: 20px;
         margin: 10px;
         text-align: center;
-        background-color: #f0f0f0;
+        background-color: #fff;
         transition: transform 0.3s ease;
         position: relative;
         width: 300px; /* Set a fixed width for the card */
@@ -340,6 +345,7 @@ st.markdown(
         align-items: center;
         justify-content: center;
         font-size: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     </style>
     """,
@@ -417,6 +423,6 @@ def set_match(film):
 
 # Check for matches
 if st.session_state.swipes >= 5:
-    st.write("MATCHED!")
+    st.write("MATCHED! 🎉")
     st.write("Your matches:", st.session_state.user_matches)
     st.stop()
