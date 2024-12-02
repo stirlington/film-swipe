@@ -333,6 +333,13 @@ st.markdown(
         text-align: center;
         background-color: #f0f0f0;
         transition: transform 0.3s ease;
+        position: relative;
+        width: 300px; /* Set a fixed width for the card */
+        height: 200px; /* Set a fixed height for the card */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
     }
     </style>
     """,
@@ -341,13 +348,13 @@ st.markdown(
 
 # Create a swipeable card
 swipe_card = st.empty()
-swipe_card.markdown(f'<div class="swipe-card">{st.session_state.current_film}</div>', unsafe_allow_html=True)
+swipe_card.markdown(f'<div class="swipe-card" id="swipe-card">{st.session_state.current_film}</div>', unsafe_allow_html=True)
 
 # JavaScript for swipe functionality
 st.markdown(
     """
     <script>
-    const card = document.querySelector('.swipe-card');
+    const card = document.getElementById('swipe-card');
     let startX;
 
     card.addEventListener('mousedown', (e) => {
@@ -356,9 +363,11 @@ st.markdown(
     });
 
     card.addEventListener('mousemove', (e) => {
-        const currentX = e.clientX;
-        const diffX = currentX - startX;
-        card.style.transform = `translateX(${diffX}px)`;
+        if (startX !== undefined) {
+            const currentX = e.clientX;
+            const diffX = currentX - startX;
+            card.style.transform = `translateX(${diffX}px)`;
+        }
     });
 
     card.addEventListener('mouseup', (e) => {
@@ -369,11 +378,10 @@ st.markdown(
             card.style.transform = 'translateX(100vw)';
             card.style.transition = 'transform 0.3s ease';
             setTimeout(() => {
+                window.parent.streamlit.setMatch(card.innerHTML);
                 card.innerHTML = 'You swiped right on: ' + card.innerHTML;
                 card.style.transform = 'translateX(0)';
                 card.style.transition = 'none';
-                // Update matches
-                window.parent.streamlit.setMatch(card.innerHTML);
             }, 300);
         } else if (diffX < -100) { // Swipe left
             card.style.transform = 'translateX(-100vw)';
@@ -387,6 +395,14 @@ st.markdown(
             card.style.transform = 'translateX(0)';
             card.style.transition = 'transform 0.3s ease';
         }
+
+        startX = undefined; // Reset startX
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateX(0)';
+        card.style.transition = 'transform 0.3s ease';
+        startX = undefined; // Reset startX
     });
     </script>
     """,
