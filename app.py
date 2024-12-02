@@ -4,6 +4,80 @@ import random
 # Define the films
 films = {
     'critically acclaimed': [
+        'L.A. Confidential (1997)', 'The Godfather (1972)', 'Casablanca (1942)', 
+        'Seven Samurai (1954)', 'Parasite (2019)', 'Schindler\'s List (1993)',
+        'Top Gun: Maverick (2022)', 'Toy Story 2 (1999)', 'Chinatown (1974)',
+        # Add all other movies here...
+    ]
+}
+
+# Initialize session state
+if 'user_matches' not in st.session_state:
+    st.session_state.user_matches = []
+if 'current_film_index' not in st.session_state:
+    st.session_state.current_film_index = 0
+
+# Function to update the film index
+def update_film_index():
+    if st.session_state.current_film_index < len(films['critically acclaimed']) - 1:
+        st.session_state.current_film_index += 1
+    else:
+        st.session_state.current_film_index = 0  # Reset to first film if at the end
+
+# Streamlit app layout
+st.set_page_config(page_title="Film Swipe App", page_icon="🎬", layout="centered")
+st.title("🎬 Film Swipe App")
+st.markdown("<h2 style='color: #FF6347;'>Swipe Right for Love, Left for Regret!</h2>", unsafe_allow_html=True)
+
+# Display the current film
+current_film = films['critically acclaimed'][st.session_state.current_film_index]
+st.write(f"**Current Film:** {current_film}")
+
+# Create a swipeable card with improved styling
+st.markdown(
+    f"""
+    <style>
+    body {{
+        background-color: #f0f8ff;
+    }}
+    .swipe-card {{
+        border: 2px solid #0072B1;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px;
+        text-align: center;
+        background-color: #fff;
+        transition: transform 0.3s ease;
+        position: relative;
+        width: 300px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }}
+    </style>
+    <div class="swipe-card">{current_film}</div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Create buttons for swiping
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("Swipe Left 👈"):
+        update_film_index()
+with col2:
+    if st.button("Swipe Right 👉"):
+        st.session_state.user_matches.append(current_film)
+        update_film_index()
+
+# Display matches
+if st.session_state.user_matches:
+    st.subheader("Your Matches")
+    for match in st.session_state.user_matches:
+        st.write(match)
         'L.A. Confidential (1997)',  # 99%
         'The Godfather (1972)',  # 97%
         'Casablanca (1942)',  # 99%
